@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SocketPanel.qml</file>
+        <file>SimRow.qml</file>
+    </qresource>
+</RCC>
