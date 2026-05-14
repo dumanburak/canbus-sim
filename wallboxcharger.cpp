@@ -9,22 +9,22 @@ WallboxCharger::WallboxCharger(QObject *parent) : QObject(parent)
     setupVcan();
 }
 
-// ── vcan0 kurulum ────────────────────────────────────────────────────────────
+// ── can0 (sanal) kurulum ─────────────────────────────────────────────────────
 
 void WallboxCharger::setupVcan()
 {
     // Önce arayüzün zaten var olup olmadığını kontrol et
     QProcess check;
-    check.start("ip", {"link", "show", "vcan0"});
+    check.start("ip", {"link", "show", "can0"});
     check.waitForFinished(3000);
     bool exists = (check.exitCode() == 0);
 
     if (!exists) {
         QProcess add;
-        add.start("ip", {"link", "add", "dev", "vcan0", "type", "vcan"});
+        add.start("ip", {"link", "add", "dev", "can0", "type", "vcan"});
         add.waitForFinished(3000);
         if (add.exitCode() != 0) {
-            m_statusMessage = "vcan0 oluşturulamadı: " + QString(add.readAllStandardError());
+            m_statusMessage = "can0 oluşturulamadı: " + QString(add.readAllStandardError());
             m_vcanReady = false;
             emit statusMessageChanged();
             emit vcanStatusChanged();
@@ -33,17 +33,17 @@ void WallboxCharger::setupVcan()
     }
 
     QProcess up;
-    up.start("ip", {"link", "set", "up", "vcan0"});
+    up.start("ip", {"link", "set", "up", "can0"});
     up.waitForFinished(3000);
     if (up.exitCode() != 0) {
-        m_statusMessage = "vcan0 up yapılamadı: " + QString(up.readAllStandardError());
+        m_statusMessage = "can0 up yapılamadı: " + QString(up.readAllStandardError());
         m_vcanReady = false;
         emit statusMessageChanged();
         emit vcanStatusChanged();
         return;
     }
 
-    m_statusMessage = "vcan0 hazır";
+    m_statusMessage = "can0 hazır";
     emit statusMessageChanged();
 
     initCanDevice();
@@ -59,7 +59,7 @@ void WallboxCharger::initCanDevice()
 
     m_device = QCanBus::instance()->createDevice(
                    QStringLiteral("socketcan"),
-                   QStringLiteral("vcan0"),
+                   QStringLiteral("can0"),
                    &m_errorString);
 
     if (!m_device) {
@@ -83,10 +83,10 @@ void WallboxCharger::initCanDevice()
     }
 
     m_vcanReady = true;
-    m_statusMessage = "vcan0 bağlı – TX hazır";
+    m_statusMessage = "can0 bağlı – TX hazır";
     emit statusMessageChanged();
     emit vcanStatusChanged();
-    qDebug() << "CAN TX init OK: vcan0";
+    qDebug() << "CAN TX init OK: can0";
 }
 
 // ── Auto-send ────────────────────────────────────────────────────────────────

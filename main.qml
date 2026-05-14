@@ -11,7 +11,7 @@ Window {
     minimumWidth: 900
     minimumHeight: 600
     visible: true
-    title: "CAN Bus Simülatör – vcan0"
+    title: "CAN Bus Simülatör – can0"
     color: "#1e1e2e"
 
     WallboxCharger { id: can }
@@ -91,7 +91,7 @@ Window {
             }
 
             Button {
-                text: "vcan0 Kur"
+                text: "can0 Kur"
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: can.setupVcan()
                 background: Rectangle {
