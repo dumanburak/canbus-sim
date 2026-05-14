@@ -280,7 +280,7 @@ void WallboxCharger::sendAll()
                      1536,        // 0x600  status
                      1537,        // 0x601  measurements
                      1538,        // 0x602  time/energy
-                     0x15110007,  // EV status  (SECC_MSG4)
+                     0x15100007,  // EV status  (EVStatus_EVRESSSOC dahil, A soketi)
                      0x15110009,  // EV target  (SECC_MSG6)
                      0x15100008); // EVSE present (EVSE_MSG5)
 
@@ -289,7 +289,7 @@ void WallboxCharger::sendAll()
                      1552,        // 0x610  status
                      1553,        // 0x611  measurements
                      1554,        // 0x612  time/energy
-                     0x15110107,  // EV status  (SECC1_MSG4)
+                     0x15100107,  // EV status  (EVStatus_EVRESSSOC dahil, B soketi)
                      0x15110109,  // EV target  (SECC1_MSG6)
                      0x15100108); // EVSE present (EVSE1_MSG5)
 
