@@ -65,9 +65,13 @@ Item {
 
                 ComboBox {
                     id: csBox
-                    model: ["0 – Idle", "1 – Waiting Auth", "2 – Auth OK",
-                            "3 – Precharge", "4 – Charging", "5 – Ending",
-                            "6 – Fault", "7 – Finished"]
+                    model: ["0 – Startup", "1 – Error", "2 – TerminateSession",
+                            "3 – WaitTerminate", "4 – WaitUnplug", "5 – WaitPlug",
+                            "6 – SessionStart", "7 – WaitAuthRequest",
+                            "8 – ProcessAuth", "9 – WaitChargeParamReq",
+                            "10 – WaitCableCheckReq", "11 – ProcessCableCheck",
+                            "12 – WaitPrechargeResp", "13 – ProcessPrecharge",
+                            "14 – CurrentSupply"]
                     currentIndex: chargeState
                     onActivated: editChargeState(index)
                     background: Rectangle { color: clrPanel; border.color: clrBorder; radius: 4 }
@@ -79,21 +83,21 @@ Item {
                 }
             }
 
-            // ── Plug State ────────────────────────────────────────────────────
+            // ── CP State ──────────────────────────────────────────────────────
             Row {
                 spacing: 12
                 leftPadding: 8
                 height: 36
 
                 Text {
-                    text: "Plug State"
+                    text: "CP State"
                     color: clrText; font.pixelSize: 13
                     width: 200; height: 36; verticalAlignment: Text.AlignVCenter
                 }
 
                 ComboBox {
                     id: psBox
-                    model: ["0 – Unplugged", "1 – Plugged", "2 – Locked", "3 – Fault"]
+                    model: ["0 – unknown", "1 – A", "2 – B", "3 – C", "4 – D", "5 – ERROR"]
                     currentIndex: plugState
                     onActivated: editPlugState(index)
                     background: Rectangle { color: clrPanel; border.color: clrBorder; radius: 4 }

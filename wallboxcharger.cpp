@@ -164,14 +164,22 @@ void WallboxCharger::sendSocketFrames(const SocketData &s,
     // ── Measurements frame (0x601 / 0x611) ───────────────────────────────
     // payload[0-1] = presentVoltage * 10  (uint16 LE)
     // payload[2-3] = (presentCurrent + 1000) * 10  (uint16 LE)
+    // payload[4-5] = targetVoltage * 10  (uint16 LE)
+    // payload[6-7] = (targetCurrent + 1000) * 10  (uint16 LE)
     {
         QByteArray p(8, 0x00);
         quint16 volt = static_cast<quint16>(s.presentVoltage * 10.0);
         quint16 curr = static_cast<quint16>((s.presentCurrent + 1000.0) * 10.0);
+        quint16 tvolt = static_cast<quint16>(s.targetVoltage * 10.0);
+        quint16 tcurr = static_cast<quint16>((s.targetCurrent + 1000.0) * 10.0);
         p[0] = static_cast<char>(volt & 0xFF);
         p[1] = static_cast<char>((volt >> 8) & 0xFF);
         p[2] = static_cast<char>(curr & 0xFF);
         p[3] = static_cast<char>((curr >> 8) & 0xFF);
+        p[4] = static_cast<char>(tvolt & 0xFF);
+        p[5] = static_cast<char>((tvolt >> 8) & 0xFF);
+        p[6] = static_cast<char>(tcurr & 0xFF);
+        p[7] = static_cast<char>((tcurr >> 8) & 0xFF);
         sendFrame(measId, p, false);
     }
 
@@ -205,13 +213,13 @@ void WallboxCharger::sendSocketFrames(const SocketData &s,
         sendFrame(evStatusId, p, true);   // extended frame
     }
 
-    // ── EV Target frame (0x15100009 / 0x15100109) ─────────────────────────
-    // payload[4-5] = targetVoltage * 10  (uint16 LE)
-    // payload[6-7] = targetCurrent * 10  (uint16 LE)
+    // ── EV Target frame (0x15110009 / 0x15110109) ─────────────────────────
+    // payload[4-5] = targetVoltage * 10  (uint16 LE, unsigned)
+    // payload[6-7] = targetCurrent * 10  (int16 LE, signed, no offset)
     {
         QByteArray p(8, 0x00);
         quint16 tv = static_cast<quint16>(s.targetVoltage * 10.0);
-        quint16 tc = static_cast<quint16>(s.targetCurrent * 10.0);
+        qint16  tc = static_cast<qint16>(s.targetCurrent * 10.0);
         p[4] = static_cast<char>(tv & 0xFF);
         p[5] = static_cast<char>((tv >> 8) & 0xFF);
         p[6] = static_cast<char>(tc & 0xFF);
@@ -267,23 +275,23 @@ void WallboxCharger::sendAll()
 {
     if (!m_vcanReady || !m_device) return;
 
-    // CCS1 — ID'ler HMI CANReceive switch-case'inden alındı
+    // CCS1 — ID'ler DBC (evseson.dbc + EV_PLC.dbc) doğrulandı
     sendSocketFrames(m_ccs1,
                      1536,        // 0x600  status
                      1537,        // 0x601  measurements
                      1538,        // 0x602  time/energy
-                     0x15100007,  // EV status
-                     0x15100009,  // EV target
-                     0x15100008); // EVSE present
+                     0x15110007,  // EV status  (SECC_MSG4)
+                     0x15110009,  // EV target  (SECC_MSG6)
+                     0x15100008); // EVSE present (EVSE_MSG5)
 
     // CCS2
     sendSocketFrames(m_ccs2,
                      1552,        // 0x610  status
                      1553,        // 0x611  measurements
                      1554,        // 0x612  time/energy
-                     0x15100107,  // EV status
-                     0x15100109,  // EV target
-                     0x15100108); // EVSE present
+                     0x15110107,  // EV status  (SECC1_MSG4)
+                     0x15110109,  // EV target  (SECC1_MSG6)
+                     0x15100108); // EVSE present (EVSE1_MSG5)
 
     sendCommonFrames();
 }
