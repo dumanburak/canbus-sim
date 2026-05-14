@@ -2,12 +2,13 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 Row {
+    id: simRow
+
     readonly property color clrText:   "#f8f8f2"
     readonly property color clrBorder: "#44475a"
     readonly property color clrAccent: "#bd93f9"
     readonly property color clrYellow: "#f1fa8c"
     readonly property color clrPanel:  "#2a2a3e"
-    readonly property color clrRed:    "#ff5555"
 
     property string label:        ""
     property var    displayValue: 0
@@ -23,7 +24,7 @@ Row {
     height: 36
 
     Text {
-        text: label
+        text: simRow.label
         color: clrText
         font.pixelSize: 13
         width: 200
@@ -35,13 +36,13 @@ Row {
         id: sldr
         width: 260
         height: 36
-        from: parent.from
-        to: parent.to
-        stepSize: parent.stepSize
-        value: parent.currentValue
+        from: simRow.from
+        to: simRow.to
+        stepSize: simRow.stepSize
+        value: simRow.currentValue
         onMoved: {
             txBox.text = sldr.value.toFixed(txBox.decimals)
-            parent.valueEdited(value)
+            simRow.valueEdited(value)
         }
 
         background: Rectangle {
@@ -70,18 +71,17 @@ Row {
         }
     }
 
-    // Ondalık basamak sayısı: stepSize'a göre otomatik
     TextField {
         id: txBox
 
         readonly property int decimals: {
-            var s = parent.stepSize
+            var s = simRow.stepSize
             if (s >= 1)   return 0
             if (s >= 0.1) return 1
             return 2
         }
 
-        text: parent.currentValue.toFixed(decimals)
+        text: simRow.currentValue.toFixed(decimals)
         width: 80
         height: 28
         anchors.verticalCenter: parent.verticalCenter
@@ -99,30 +99,27 @@ Row {
         }
 
         validator: DoubleValidator {
-            bottom: parent.parent.from
-            top:    parent.parent.to
+            bottom: simRow.from
+            top:    simRow.to
             notation: DoubleValidator.StandardNotation
         }
 
         onEditingFinished: {
             var v = parseFloat(text)
             if (isNaN(v)) { text = sldr.value.toFixed(decimals); return }
-            v = Math.max(parent.parent.from, Math.min(parent.parent.to, v))
-            // stepSize'a snap
-            if (parent.parent.stepSize > 0) {
-                v = Math.round(v / parent.parent.stepSize) * parent.parent.stepSize
-            }
+            v = Math.max(simRow.from, Math.min(simRow.to, v))
+            if (simRow.stepSize > 0)
+                v = Math.round(v / simRow.stepSize) * simRow.stepSize
             sldr.value = v
             text = v.toFixed(decimals)
-            parent.valueEdited(v)
+            simRow.valueEdited(v)
         }
 
-        // currentValue dışarıdan değişince (örn. reset) güncelle
         Connections {
-            target: txBox.parent
+            target: simRow
             onCurrentValueChanged: {
                 if (!txBox.activeFocus)
-                    txBox.text = txBox.parent.currentValue.toFixed(txBox.decimals)
+                    txBox.text = simRow.currentValue.toFixed(txBox.decimals)
             }
         }
     }
