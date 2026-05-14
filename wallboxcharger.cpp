@@ -13,18 +13,29 @@ WallboxCharger::WallboxCharger(QObject *parent) : QObject(parent)
 
 void WallboxCharger::setupVcan()
 {
-    // Önce arayüzün zaten var olup olmadığını kontrol et
     QProcess check;
     check.start("ip", {"link", "show", "can0"});
     check.waitForFinished(3000);
-    bool exists = (check.exitCode() == 0);
 
-    if (!exists) {
+    if (check.exitCode() == 0) {
+        // Interface var — UP mu kontrol et
+        QString out = QString(check.readAllStandardOutput());
+        if (out.contains("UP")) {
+            // Zaten ayakta, direkt bağlan
+            m_statusMessage = "can0 hazır";
+            emit statusMessageChanged();
+            initCanDevice();
+            return;
+        }
+        // Var ama DOWN — ayağa kaldırmayı dene
+    } else {
+        // Interface yok — oluştur (root gerekir)
         QProcess add;
         add.start("ip", {"link", "add", "dev", "can0", "type", "vcan"});
         add.waitForFinished(3000);
         if (add.exitCode() != 0) {
-            m_statusMessage = "can0 oluşturulamadı: " + QString(add.readAllStandardError());
+            m_statusMessage = "can0 bulunamadı. Terminalde çalıştırın:\n"
+                              "sudo ip link add dev can0 type vcan && sudo ip link set up can0";
             m_vcanReady = false;
             emit statusMessageChanged();
             emit vcanStatusChanged();
@@ -36,7 +47,7 @@ void WallboxCharger::setupVcan()
     up.start("ip", {"link", "set", "up", "can0"});
     up.waitForFinished(3000);
     if (up.exitCode() != 0) {
-        m_statusMessage = "can0 up yapılamadı: " + QString(up.readAllStandardError());
+        m_statusMessage = "can0 up yapılamadı. Terminalde: sudo ip link set up can0";
         m_vcanReady = false;
         emit statusMessageChanged();
         emit vcanStatusChanged();
@@ -45,7 +56,6 @@ void WallboxCharger::setupVcan()
 
     m_statusMessage = "can0 hazır";
     emit statusMessageChanged();
-
     initCanDevice();
 }
 
