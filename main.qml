@@ -162,6 +162,8 @@ Window {
             soc:                can.ccs1SoC
             evReady:            can.ccs1EvReady
             errors:             can.ccs1Errors
+            elapsedTime:        can.ccs1ElapsedTime
+            deliveredEnergy:    can.ccs1DeliveredEnergy
 
             onEditChargeState:        can.ccs1ChargeState        = value
             onEditPlugState:          can.ccs1PlugState          = value
@@ -174,6 +176,8 @@ Window {
             onEditSoC:                can.ccs1SoC                = value
             onEditEvReady:            can.ccs1EvReady            = value
             onEditErrors:             can.ccs1Errors             = value
+            onEditElapsedTime:        can.ccs1ElapsedTime        = value
+            onEditDeliveredEnergy:    can.ccs1DeliveredEnergy    = value
             onRemoteStartClicked:     can.triggerRemoteStartCCS1()
         }
 
@@ -190,6 +194,8 @@ Window {
             soc:                can.ccs2SoC
             evReady:            can.ccs2EvReady
             errors:             can.ccs2Errors
+            elapsedTime:        can.ccs2ElapsedTime
+            deliveredEnergy:    can.ccs2DeliveredEnergy
 
             onEditChargeState:        can.ccs2ChargeState        = value
             onEditPlugState:          can.ccs2PlugState          = value
@@ -202,6 +208,8 @@ Window {
             onEditSoC:                can.ccs2SoC                = value
             onEditEvReady:            can.ccs2EvReady            = value
             onEditErrors:             can.ccs2Errors             = value
+            onEditElapsedTime:        can.ccs2ElapsedTime        = value
+            onEditDeliveredEnergy:    can.ccs2DeliveredEnergy    = value
             onRemoteStartClicked:     can.triggerRemoteStartCCS2()
         }
 

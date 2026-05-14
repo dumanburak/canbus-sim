@@ -24,6 +24,8 @@ Item {
     property int    soc:                0
     property bool   evReady:            false
     property int    errors:             0
+    property int    elapsedTime:        0
+    property double deliveredEnergy:    0.0
 
     // ── Kullanıcı düzenlemesi sinyalleri (Qt property sinyalleriyle çakışmaz) ──
     signal editChargeState(int value)
@@ -37,6 +39,8 @@ Item {
     signal editSoC(int value)
     signal editEvReady(bool value)
     signal editErrors(int value)
+    signal editElapsedTime(int value)
+    signal editDeliveredEnergy(real value)
     signal remoteStartClicked()
 
     Flickable {
@@ -188,6 +192,24 @@ Item {
                 from: 0; to: 500; stepSize: 0.5
                 currentValue: targetCurrent
                 onValueEdited: editTargetCurrent(val)
+            }
+
+            // ── Elapsed Time (0x602 / 0x612 byte 0-3) ────────────────────────
+            SimRow {
+                label: "Elapsed Time (s)"
+                displayValue: elapsedTime
+                from: 0; to: 86400; stepSize: 1
+                currentValue: elapsedTime
+                onValueEdited: editElapsedTime(Math.round(val))
+            }
+
+            // ── Delivered Energy (0x602 / 0x612 byte 4-7) ────────────────────
+            SimRow {
+                label: "Delivered Energy (kWh)"
+                displayValue: deliveredEnergy.toFixed(3)
+                from: 0; to: 200; stepSize: 0.01
+                currentValue: deliveredEnergy
+                onValueEdited: editDeliveredEnergy(val)
             }
 
             // ── Error Flags ───────────────────────────────────────────────────
