@@ -1,0 +1,40 @@
+# Qt build çıktıları
+build*/
+*.o
+*.a
+moc_*.cpp
+qrc_*.cpp
+*.moc
+ui_*.h
+.qmake.stash
+Makefile
+
+# Qt Creator proje dosyaları (kişisel)
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+CMakeLists.txt.user
+
+# Derlenmiş binary'ler (Linux/Mac/Win)
+[Bb]uild/
+*.exe
+*.app
+*.out
+*.elf
+
+# CMake cache
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# Geçici
+*.tmp
+*.bak
